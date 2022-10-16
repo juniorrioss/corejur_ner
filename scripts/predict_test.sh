@@ -1,0 +1,13 @@
+python modules/run_ner_transformers.py \
+  --task_name ner \
+  --per_device_eval_batch_size 128 \
+  --output_dir a \
+  --seed 2 \
+  --model_name_or_path v17_xdeberta/checkpoint-10500 \
+  --train_file processed_data/v17_80_0_512/fold-0/train.json  \
+  --validation_file processed_data/v17_80_0_512/fold-0/dev.json \
+  --test_file processed_data/v17_80_0_512/test-v17-v19.json \
+  --do_predict True \
+  --max_seq_length 512 \
+  --return_entity_level_metrics True \
+  --fp16 True

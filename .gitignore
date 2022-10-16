@@ -1,0 +1,20 @@
+# datasets
+raw_data/
+processed_data/
+
+# report to
+mlruns/
+wandb
+
+
+# logs
+*.log
+/a/
+/v*/
+
+# .env
+.env
+
+
+# cache
+__*__

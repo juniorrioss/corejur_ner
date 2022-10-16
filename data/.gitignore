@@ -1,0 +1,8 @@
+*.conll
+*.json
+*.xlsx
+*.txt
+*.ipynb
+*.png
+/__*__/
+
