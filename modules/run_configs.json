@@ -1,0 +1,26 @@
+{
+  "task_name": "ner",
+  "max_steps": 15000,
+  "output_dir": "runs/v17",
+  "seed": 2,
+  "train_file": "processed_data/v17_80_0_512/fold-0/train.json",
+  "validation_file": "processed_data/v17_80_0_512/fold-0/dev.json",
+  "test_file": "processed_data/v17_80_0_512/test-v17-v18.json",
+  "do_train": "True",
+  "do_eval": "True",
+  "do_predict": "True",
+  "report_to": [
+    "mlflow",
+    "wandb"
+  ],
+  "evaluation_strategy": "steps",
+  "eval_steps": 50,
+  "max_seq_length": 512,
+  "return_entity_level_metrics": "True",
+  "gradient_accumulation_steps": 1,
+  "gradient_checkpointing": "False",
+  "fp16": "True",
+  "metric_for_best_model": "overall_f1",
+  "save_total_limit": 1,
+  "save_steps": 10e10
+}

@@ -7,7 +7,7 @@ DATASET:
   folder: raw_data
   filename: corejur_ner_v17.conll
   TEST:
-    generate_test_from: corejur_ner_v19.conll 
+    generate_test_from: corejur_ner_v18.conll 
     length_to_truncate_test: 384 
 
 SAVE:

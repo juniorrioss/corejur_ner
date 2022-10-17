@@ -10,6 +10,7 @@ wandb
 # logs
 *.log
 /a/
+/b/
 /v*/
 
 # .env
@@ -18,3 +19,6 @@ wandb
 
 # cache
 __*__
+
+# runs
+/runs/
