@@ -1,5 +1,5 @@
 from typing import List
-
+from unidecode import unidecode
 import numpy as np
 
 
@@ -154,3 +154,8 @@ def datas_change(df, datas_to_change=["Data_do_contrato", "Data_dos_fatos"]):
     )
 
     return df.reset_index()
+
+
+def remove_label_punctuaction(df):
+    df["tags"] = df["tags"].apply(lambda tags: [unidecode(label) for label in tags])
+    return df

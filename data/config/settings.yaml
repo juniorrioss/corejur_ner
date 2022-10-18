@@ -5,13 +5,13 @@ hydra:
 
 DATASET:
   folder: raw_data
-  filename: corejur_ner_v17.conll
+  filename: corejur_ner_v18.conll
   TEST:
-    generate_test_from: corejur_ner_v18.conll 
+    generate_test_from: corejur_ner_v19.conll 
     length_to_truncate_test: 384 
 
 SAVE:
-  save_folder: processed_data/v17_80_0_512
+  save_folder: processed_data/v18_80_0_512
   # save file into .conll
   save_into_conll: True 
   # save file into .json

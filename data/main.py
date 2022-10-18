@@ -118,6 +118,8 @@ def main(config: DictConfig):
             ),
         )
 
+    df = preprocessing.remove_label_punctuaction(df)
+
     print("SPLITS into FOLDS")
 
     #

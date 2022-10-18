@@ -44,6 +44,7 @@ def generate_test_split(config: DictConfig):
     test_dataset = preprocessing.datas_change(
         test_dataset, datas_to_change=datas_to_change
     )
+    test_dataset = preprocessing.remove_label_punctuaction(test_dataset)
 
     test_dataset["len"] = test_dataset["text"].apply(len)
     truncate_data = test_dataset[test_dataset["len"] > length_to_truncate]
