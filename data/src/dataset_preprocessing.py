@@ -51,98 +51,45 @@ def fill_O_tags(df, tags_to_remove: List):
     return df
 
 
-def filter_entities(df, minimum_entity_ratio: 0):
-    assert (
-        minimum_entity_ratio > 0 and minimum_entity_ratio < 1
-    ), "Ratio must be between 0 and 1"
+# def filter_entities(df, minimum_entity_ratio: 0):
+#     assert (
+#         minimum_entity_ratio > 0 and minimum_entity_ratio < 1
+#     ), "Ratio must be between 0 and 1"
 
-    # TODAS AS TAGS DIFERENTES DE 'O'
-    labels = {
-        tag[2:]: 0 for tags in df["tags"] for tag in tags if tag != "O"
-    }  # cria todas as labels com valor 0
-    # verifica a quantidade das labels
-    tags = np.array([tag[2:] for tags in df["tags"] for tag in tags if tag != "O"])
-    # associa a label com a quantidade
-    for k in labels:
-        labels[k] = sum(tags == k)
+#     # TODAS AS TAGS DIFERENTES DE 'O'
+#     labels = {
+#         tag[2:]: 0 for tags in df["tags"] for tag in tags if tag != "O"
+#     }  # cria todas as labels com valor 0
+#     # verifica a quantidade das labels
+#     tags = np.array([tag[2:] for tags in df["tags"] for tag in tags if tag != "O"])
+#     # associa a label com a quantidade
+#     for k in labels:
+#         labels[k] = sum(tags == k)
 
-    # ORDENA CRESCENTE E DIVIDE PELO TOTAL (GERANDO PORCENTAGEM)
-    total_valid_tags = sum(labels.values())
-    labels = {
-        k: v / total_valid_tags
-        for k, v in sorted(labels.items(), key=lambda item: item[1], reverse=False)
-    }
+#     # ORDENA CRESCENTE E DIVIDE PELO TOTAL (GERANDO PORCENTAGEM)
+#     total_valid_tags = sum(labels.values())
+#     labels = {
+#         k: v / total_valid_tags
+#         for k, v in sorted(labels.items(), key=lambda item: item[1], reverse=False)
+#     }
 
-    entities_to_remove = []
-    for k, v_ratio in labels.items():
-        if v_ratio < minimum_entity_ratio:
-            entities_to_remove.append(k)
-        else:
-            # array está em ordem crescente, ou seja, todos os outros serão > minimo
+#     entities_to_remove = []
+#     for k, v_ratio in labels.items():
+#         if v_ratio < minimum_entity_ratio:
+#             entities_to_remove.append(k)
+#         else:
+#             # array está em ordem crescente, ou seja, todos os outros serão > minimo
 
-            break
-    return fill_O_tags(df, entities_to_remove=entities_to_remove)
-
-
-def undersampling_negative_sentences(df, ratio_to_remove=0.8):
-    """Apply undersampling in sentences with full tags 'O'
-
-    Args:
-        df (pd.Dataframe): dataframe object
-        ratio_to_remove (float, optional): undersampling Ratio. Defaults to 0.8.
-
-    Returns:
-        pd.dataFrame: DataFrame with undersampling
-    """
-
-    # sentences with ALL TAGS '0'
-    df["nullSentences"] = df["tags"].apply(
-        lambda tags: all([tag == "O" for tag in tags])
-    )
-
-    df2 = df[df["nullSentences"]].sample(frac=ratio_to_remove, random_state=0)
-
-    # todos os index que não estão nos retirados
-    dataset_filtered = df[~df.index.isin(df2.index)]
-    # remover a coluna criada e resetar os indexes
-    dataset_filtered = dataset_filtered.drop("nullSentences", axis=1)
-
-    return dataset_filtered.reset_index()
+#             break
+#     return fill_O_tags(df, entities_to_remove=entities_to_remove)
 
 
-def undersampling_entity(df, undersampling_tags, ratio_to_remove=0.5):
-    """Apply undersampling with specific tags
-
-    Args:
-        df (pd.dataFrame): Dataframe object
-        undersampling_tags (List[String]): A List of Tags to apply undersampling
-        ratio_to_remove (float, optional): Undersampling Ratio. Defaults to 0.5.
-
-    Returns:
-        pd.dataFrame: Dataframe object with tags undersampled
-    """
-
-    # sentences with at least one TAG
-    df["withEntity"] = df["tags"].apply(
-        lambda tags: any([tag[2:] in undersampling_tags for tag in tags])
-    )
-
-    df2 = df[df["withEntity"]].sample(frac=ratio_to_remove, random_state=0)
-
-    # todos os index que não estão nos retirados
-    dataset_filtered = df[~df.index.isin(df2.index)]
-    # remover a coluna criada e resetar os indexes
-    dataset_filtered = dataset_filtered.drop("withEntity", axis=1)
-
-    return dataset_filtered.reset_index(drop=True)
-
-
-# def remove_jurisprudencia_sentence(df):
-#     # REMOVE JURISPRUDENCIA
-#     df["haveJurisprudencia"] = df["tags"].apply(lambda x: "B-Jurisprudência" in x)
-#     print("SENTENÇAS COM JURISPRUDENCIA ", df["haveJurisprudencia"].sum())
-#     df = df[df["haveJurisprudencia"] is False][["text", "tags"]].reset_index()
-#     return df
+def remove_jurisprudencia_sentence(df):
+    # REMOVE JURISPRUDENCIA
+    df["haveJurisprudencia"] = df["tags"].apply(lambda x: "B-Jurisprudência" in x)
+    print("SENTENÇAS COM JURISPRUDENCIA ", df["haveJurisprudencia"].sum())
+    df = df[df["haveJurisprudencia"] == False].reset_index()
+    return df[["text", "tags"]]
 
 
 def datas_change(df, datas_to_change=["Data_do_contrato", "Data_dos_fatos"]):
@@ -159,3 +106,37 @@ def datas_change(df, datas_to_change=["Data_do_contrato", "Data_dos_fatos"]):
 def remove_label_punctuaction(df):
     df["tags"] = df["tags"].apply(lambda tags: [unidecode(label) for label in tags])
     return df
+
+
+class PreProcessDataset:
+    def __init__(self, config):
+        self.config = config
+
+    def run(self, df):
+        # FILTER TAGS WITH MINIMUM RATIO # removendo abaixo de 0.5%
+        # df = utils.filter_entities(df, minimum_entity_ratio=0.005)
+
+        # FILTER SENTENCES WITH ENTITIES
+        tags_to_remove = self.config.get("fill_O_tags", "")
+        if tags_to_remove:
+            df = fill_O_tags(df, tags_to_remove)
+
+        if self.config.get("remove_jurisprudencia_sentence"):
+            df = remove_jurisprudencia_sentence(df)
+
+        # Datas_do_contrato e Datas_dos_fatos PARA Datas
+        datas_to_change = self.config.get("datas_aggregation")
+        if datas_to_change:
+            print("Datas Aggretation to Generic Datas", datas_to_change)
+            # hardcoded due to business decision
+            df = datas_change(df, datas_to_change=datas_to_change)
+
+        # A MUST STEP
+        # FILTER MAX_LENGHT SENTENCES
+        df = trucate_sentence_max_length(
+            df, max_length=self.config.get("max_length_sentence", 512)
+        )
+
+        df = remove_label_punctuaction(df)
+
+        return df

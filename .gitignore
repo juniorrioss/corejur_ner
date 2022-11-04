@@ -1,6 +1,7 @@
 # datasets
-raw_data/
-processed_data/
+# raw_data/
+# processed_data/
+/*_data/
 
 # report to
 mlruns/
@@ -22,3 +23,5 @@ __*__
 
 # runs
 /runs/
+*pdf
+*tex

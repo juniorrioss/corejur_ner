@@ -34,7 +34,7 @@ Fine-tuning the library models for token classification.
 """
 # You can also adapt this script on your own token classification task and datasets. Pointers for this are left as
 # comments.
-import unidecode
+from unidecode import unidecode
 from dotenv import load_dotenv
 from torch import nn
 import logging
@@ -255,6 +255,7 @@ def main():
     mlflow.set_tracking_uri(os.environ.get("MLFLOW_TRACKING_URI"))
 
     wandb.init()
+
     sweep_config = wandb.config
 
     # See all possible arguments in src/transformers/training_args.py
@@ -264,11 +265,16 @@ def main():
     run_configs = json.loads(open_json_file.read())
 
     config = {**sweep_config, **run_configs}
+    # print("Configs--->: ", config)
     parser = HfArgumentParser(
         (ModelArguments, DataTrainingArguments, TrainingArguments)
     )
 
     model_args, data_args, training_args = parser.parse_dict(config)
+    # model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+    print("MODEL", model_args)
+    print("training_args", training_args)
+    print("DATA", data_args)
 
     # Setup logging
     logging.basicConfig(
@@ -382,11 +388,11 @@ def main():
     labels_are_int = isinstance(features[label_column_name].feature, ClassLabel)
     if labels_are_int:
         label_list = features[label_column_name].feature.names
-        label_to_id = {i: i for i in range(len(label_list))}
     else:
         label_list = get_label_list(raw_datasets["train"][label_column_name])
-        label_list = [unidecode.unidecode(l) for l in label_list]
-        label_to_id = {l: i for i, l in enumerate(label_list)}
+
+    # label_list = [unidecode(label) for label in label_list]
+    label_to_id = {l: i for i, l in enumerate(label_list)}
 
     num_labels = len(label_list)
 
@@ -506,16 +512,12 @@ def main():
                     label_ids.append(-100)
                 # We set the label for the first token of each word.
                 elif word_idx != previous_word_idx:
-                    label_ids.append(label_to_id[unidecode.unidecode(label[word_idx])])
+                    label_ids.append(label_to_id[(label[word_idx])])
                 # For the other tokens in a word, we set the label to either the current label or -100, depending on
                 # the label_all_tokens flag.
                 else:
                     if data_args.label_all_tokens:
-                        label_ids.append(
-                            b_to_i_label[
-                                label_to_id[unidecode.unidecode(label[word_idx])]
-                            ]
-                        )
+                        label_ids.append(b_to_i_label[label_to_id[(label[word_idx])]])
                     else:
                         label_ids.append(-100)
                 previous_word_idx = word_idx

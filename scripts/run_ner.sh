@@ -1,18 +1,18 @@
 python modules/run_ner_transformers.py \
   --task_name ner \
-  --per_device_train_batch_size 8 \
-  --learning_rate 5e-5 \
-  --max_steps 15000 \
-  --output_dir runs/v17-xlmrobertabase \
+  --per_device_train_batch_size 16 \
+  --learning_rate 1e-5 \
+  --max_steps 16000 \
+  --output_dir runs/v18_debertabase \
   --seed 2 \
-  --model_name_or_path xlm-roberta-base \
+  --model_name_or_path microsoft/deberta-v3-xsmall \
   --train_file processed_data/v18_80_0_512/fold-0/train.json  \
   --validation_file processed_data/v18_80_0_512/fold-0/dev.json \
   --test_file processed_data/v18_80_0_512/test-v18-v19.json \
   --do_train \
   --do_eval \
   --do_predict \
-  --report_to mlflow wandb \
+  --report_to wandb \
   --max_seq_length 512 \
   --return_entity_level_metrics True \
   --save_total_limit 1 \
@@ -20,6 +20,7 @@ python modules/run_ner_transformers.py \
   --gradient_accumulation_steps 1 \
   --gradient_checkpointing False \
   --fp16 True \
+  --fp16_full_eval True \
   --metric_for_best_model overall_f1 \
-  --eval_steps 150 \
+  --eval_steps 500 \
   --evaluation_strategy steps

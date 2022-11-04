@@ -124,8 +124,7 @@ class DatasetAnalysis:
 
         else:
             text = [
-                f"""Processing {'train' if train_data else 'test'}
-                dataset FOLD-{n_fold} statistics \n\n"""
+                f"""Processing {'train' if train_data else 'dev'} dataset FOLD-{n_fold} statistics \n\n"""
             ]
 
         # DESCRIBE INFORMATIONS

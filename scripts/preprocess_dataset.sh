@@ -1,1 +1,1 @@
-python data/main.py
+python data/src/preprocess_dataset.py
