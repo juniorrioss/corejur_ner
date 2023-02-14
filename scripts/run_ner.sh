@@ -1,14 +1,14 @@
-python modules/run_ner_transformers.py \
+python src/model/run_ner_transformers.py \
   --task_name ner \
-  --per_device_train_batch_size 16 \
-  --learning_rate 1e-5 \
-  --max_steps 16000 \
-  --output_dir runs/v18_debertabase \
+  --per_device_train_batch_size 8 \
+  --learning_rate 2e-5 \
+  --output_dir runs/v23_50_c \
   --seed 2 \
-  --model_name_or_path microsoft/deberta-v3-xsmall \
-  --train_file processed_data/v18_80_0_512/fold-0/train.json  \
-  --validation_file processed_data/v18_80_0_512/fold-0/dev.json \
-  --test_file processed_data/v18_80_0_512/test-v18-v19.json \
+  --num_train_epochs 4 \
+  --model_name_or_path pbert \
+  --train_file data/posprocessed/v23_50/fold-0/train.json  \
+  --validation_file data/posprocessed/v23_50/fold-0/dev.json \
+  --test_file data/posprocessed/v23_50/test.json \
   --do_train \
   --do_eval \
   --do_predict \
@@ -21,6 +21,9 @@ python modules/run_ner_transformers.py \
   --gradient_checkpointing False \
   --fp16 True \
   --fp16_full_eval True \
-  --metric_for_best_model overall_f1 \
-  --eval_steps 500 \
-  --evaluation_strategy steps
+  --metric_for_best_model eval_overall_f1 \
+  --save_strategy steps \
+  --evaluation_strategy steps \
+  --eval_steps  1100 \
+  --save_steps  1100 \
+  --load_best_model_at_end True 
