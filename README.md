@@ -5,7 +5,9 @@
 ### For using all features of this repo mainly modify config/settings.yaml and scripts/*.sh
 
 
-### 0 - Put the conll files into folder data/raw
+
+
+## Put the conll files into folder data/raw
 
 ## PREPROCESSING
 ### Modify filename in config/setting.yaml and preprocessing args
@@ -15,11 +17,12 @@
 ```
 
 ## POSTPROCESSING (FEATURE ENG.)
-### The main attribute is `ratio_of_undersample_negative_sentences` for downsampling negative samples - Default to 0.5
-
+### The importants ones are experiment_name and ratio_of_undersample_negative_sentences 
 ```bash
   $ bash scripts/1-postprocess_dataset.sh
 ```
+### Statistics on datasets will be generated in experiment folder (data/posprocessed/experiment_name)
+
 
 
 ## TRAINING MODEL
@@ -29,6 +32,8 @@
   $ bash scripts/run_ner.sh
   
 ```
+
+
 
 #### For using wandb it's recommeded to add a `.env` file
 ```.env
