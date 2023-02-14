@@ -5,7 +5,11 @@
 ### For using all features of this repo mainly modify config/settings.yaml and scripts/*.sh
 
 
-
+## INSTALL
+### It's necessary already torch with cuda
+```bash
+  $ pip install -r major_requirements.txt
+```
 
 ## Put the conll files into folder data/raw
 
