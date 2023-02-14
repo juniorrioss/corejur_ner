@@ -1,0 +1,11 @@
+seqeval # for evaluation
+evaluate # for evaluation
+transformers # for training
+scikit-learn # for preprocessing
+python-dotenv # for .env file
+pyarrow # for datasets
+pandas # for utils
+numpy # linear algebra
+datasets # for datasets
+wandb # for logging
+# torch # for training
