@@ -1,0 +1,70 @@
+
+DATASET:
+
+  # CURRENT EXPERIMENT
+  filename: corejur_ner_v23.conll
+  experiment_name: v23_50
+  save_only_first_fold: True
+
+  # FOLDERS
+  folder_raw: data/raw
+  folder_preprocessed: data/preprocessed
+  folder_processed: data/posprocessed
+
+   
+
+  # TEST SPLIT
+  TEST:
+    generate_test_file: True
+    test_size: 0.15
+
+   
+
+
+PREPROCESSING:
+
+  # Filter negatives samples until a older version
+  # Because of extraction pipeline some sentences were not properly annotated
+  # If true - Default to v17 (103594)
+  length_filter_null_sentences_from_older_versions:  103594 # or None
+
+  # REPLACE these TAGS to 'O'  - DEFAULT ''
+  fill_O_tags: 
+    - CNPJ
+    - CPF
+    - CNPJ_do_autor
+    - CPF_do_réu     
+
+  # Concatanate any DATAS TO GENERIC DATAS - DEFAULT None
+  datas_aggregation: 
+    - Data_do_contrato
+    - Data_dos_fatos
+  
+  # Delete all sentences with tags JURISPRUDENCIA
+  remove_jurisprudencia_sentence : True 
+
+FEATURES:
+  # Remove Sentences with all tags :: 'O' - DEFAULT : TRUE
+  undersampling_negative_sentences  : True 
+  # ratio to remove - DEFAULT : 0.8
+  ratio_of_undersample_negative_sentences : 0.5
+
+  #  OR e.g. [Normativo] - DEFAULT ''
+  undersampling_tags:
+   - Normativo  
+  # ratio to remove of tags to undersample
+  ratio_of_undersample_tags: 0
+
+KFOLD:
+  n_fold : 5 
+
+UTILS:
+  # verbose for plots
+  plot_verbose: False 
+  random_state: 0 
+
+
+hydra:  
+  output_subdir: null  
+  run:  
+    dir: .
